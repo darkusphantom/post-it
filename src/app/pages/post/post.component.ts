@@ -14,11 +14,13 @@ import { finalize } from 'rxjs/operators';
 })
 export class PostComponent implements OnInit {
   post: Post | null = null;
-  aiResponse: FormControl = new FormControl('');
+  aiResponse: FormControl = new FormControl('Ingrese un copy');
   isLoading = true;
   isLoadingContent = true;
   errorMessage: string | null = null;
   showCard = false;
+  isSendingPost = false
+  postSended = false
 
   constructor(
     private route: ActivatedRoute,
@@ -64,20 +66,19 @@ export class PostComponent implements OnInit {
           } else {
             this.aiResponse.setValue('Aca iba algo XD (No se pudo obtener una respuesta)');
             console.log('No se pudo obtener una respuesta.');
-            this.openPublishModal();
           }
         },
         error: (error: Error) => {
           console.error('Error AI:', error);
           this.errorMessage = `Error al consultar la IA: ${error.message}`;
           this.showToast(this.errorMessage);
-          this.openPublishModal();
         }
       });
     }
   }
 
   sendPost(): void {
+    this.isSendingPost = true
     if (this.post && this.aiResponse.value) {
       // Convertir el contenido HTML en bloques de Notion
       const contentBlocks = this.convertHtmlToNotionBlocks(this.post.content.rendered);
@@ -124,8 +125,12 @@ export class PostComponent implements OnInit {
       };
 
       this.notion.createPage(pageData).subscribe({
-        next: (_response: any) => { },
+        next: (_response: any) => {
+          this.isSendingPost = false
+          this.postSended = true
+        },
         error: (error: any) => {
+          this.isSendingPost = false
           console.error('Error al crear la página:', error);
           window.alert(`Error al crear la página: ${error}`)
         }
@@ -285,12 +290,5 @@ export class PostComponent implements OnInit {
     const tmp = document.createElement('DIV');
     tmp.innerHTML = html;
     return tmp.textContent || tmp.innerText || '';
-  }
-
-  private openPublishModal(): void {
-    const modal = document.getElementById('prepublish-modal');
-    if (modal) {
-      modal.classList.remove('hidden');
-    }
   }
 }

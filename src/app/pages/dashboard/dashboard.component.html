@@ -11,7 +11,7 @@
       <ng-container *ngIf="loading">
         <div
           *ngFor="let post of ['', '', '', '', '', '']"
-          class="max-w-sm bg-white rounded-lg shadow-sm p-4"
+          class="max-w-sm bg-bg-gray-800 rounded-lg shadow-sm p-4"
           role="status"
         >
           <div class="h-48 bg-gray-200 rounded-lg dark:bg-gray-700 mb-4"></div>
@@ -54,7 +54,7 @@
           />
         </a>
         <div class="p-5">
-          <a href="#">
+          <a [routerLink]="['/post', post.id]">
             <h5
               class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
             >
