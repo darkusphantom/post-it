@@ -144,11 +144,10 @@ app.post('/api/notion/create-page', async (req, res) => {
 
     res.json(response);
   } catch (error) {
-    console.error('Error detallado al crear la página:', error);
+    console.error('Error al crear la página:', error);
     res.status(500).json({
       error: 'Error al crear la página en Notion',
-      details: error.message,
-      code: error.code
+      details: error.message || 'Error desconocido'
     });
   }
 });

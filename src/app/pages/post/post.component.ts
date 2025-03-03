@@ -15,9 +15,10 @@ import { finalize } from 'rxjs/operators';
 export class PostComponent implements OnInit {
   post: Post | null = null;
   aiResponse: FormControl = new FormControl('');
-  showCard: boolean = false;
   isLoading = true;
   isLoadingContent = true;
+  errorMessage: string | null = null;
+  showCard = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -33,70 +34,46 @@ export class PostComponent implements OnInit {
         .pipe(
           finalize(() => {
             this.isLoading = false;
-            // Simulamos un pequeño delay para el contenido
             setTimeout(() => {
               this.isLoadingContent = false;
             }, 500);
           })
         )
         .subscribe({
-          next: (post) => {
+          next: (post: any) => {
             this.post = post;
-            // Aseguramos que los enlaces se abran en nueva pestaña
-            if (this.post.content.rendered) {
+            if (this.post?.content.rendered) {
               this.sanitizeContent();
             }
           },
-          error: (error) => {
-            console.error('Error fetching post:', error);
-            window.alert(`Error fetching post: ${error}`);
+          error: (error: any) => {
+            this.handleError(error);
           }
         });
     }
   }
 
-  private sanitizeContent(): void {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(this.post!.content.rendered, 'text/html');
-
-    // Procesar todos los enlaces
-    doc.querySelectorAll('a').forEach(link => {
-      link.setAttribute('target', '_blank');
-      link.setAttribute('rel', 'noopener noreferrer');
-    });
-
-    // Procesar imágenes
-    doc.querySelectorAll('img').forEach(img => {
-      img.classList.add('rounded-lg', 'shadow-md');
-      img.setAttribute('loading', 'lazy');
-    });
-
-    // Procesar bloques de código
-    doc.querySelectorAll('pre').forEach(pre => {
-      pre.classList.add('rounded-lg', 'p-4', 'overflow-x-auto');
-    });
-
-    this.post!.content.rendered = doc.body.innerHTML;
-  }
-
   prepareToPublish(): void {
-    if (this.post) {
+    if (this.post?.content?.rendered) {
       const content = this.stripHtml(this.post.content.rendered);
-      // this.openAIService.getResponse(content).subscribe({
-      //   next: (response) => {
-      //     if (response) {
-      //       this.aiResponse.setValue(response);
-      this.showCard = true;
-      //     } else {
-      this.aiResponse.setValue('Aca iba algo XD (No se pudo obtener una respuesta)')
-      //       console.log('No se pudo obtener una respuesta.');
-      //     }
-      //   },
-      //   error: (error) => {
-      //     console.error('Error AI:', error);
-          //  window.alert(`Error fetching post: ${error}`)
-      //   }
-      // });
+      this.openAIService.getResponse(content).subscribe({
+        next: (response) => {
+          if (response) {
+            this.aiResponse.setValue(response);
+            this.showCard = true;
+          } else {
+            this.aiResponse.setValue('Aca iba algo XD (No se pudo obtener una respuesta)');
+            console.log('No se pudo obtener una respuesta.');
+            this.openPublishModal();
+          }
+        },
+        error: (error: Error) => {
+          console.error('Error AI:', error);
+          this.errorMessage = `Error al consultar la IA: ${error.message}`;
+          this.showToast(this.errorMessage);
+          this.openPublishModal();
+        }
+      });
     }
   }
 
@@ -147,8 +124,8 @@ export class PostComponent implements OnInit {
       };
 
       this.notion.createPage(pageData).subscribe({
-        next: (_response) => { },
-        error: (error) => {
+        next: (_response: any) => { },
+        error: (error: any) => {
           console.error('Error al crear la página:', error);
           window.alert(`Error al crear la página: ${error}`)
         }
@@ -156,6 +133,60 @@ export class PostComponent implements OnInit {
     }
   }
 
+  private handleError(error: any): void {
+    console.error('Error fetching post:', error);
+    this.errorMessage = error.error?.details as string || 'Error desconocido al cargar el post';
+    this.showToast(this.errorMessage);
+  }
+
+  private showToast(message: string): void {
+    const toast = document.createElement('div');
+    toast.className = 'flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-sm dark:text-gray-400 dark:bg-gray-800';
+    toast.innerHTML = `
+      <div class="inline-flex items-center justify-center shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200">
+        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z"/>
+        </svg>
+        <span class="sr-only">Error icon</span>
+      </div>
+      <div class="ms-3 text-sm font-normal">${message}</div>
+      <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center" aria-label="Close">
+        <span class="sr-only">Close</span>
+        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+        </svg>
+      </button>
+    `;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.remove();
+    }, 3000);
+  }
+
+  private sanitizeContent(): void {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(this.post!.content.rendered, 'text/html');
+
+    // Procesar todos los enlaces
+    doc.querySelectorAll('a').forEach(link => {
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+    });
+
+    // Procesar imágenes
+    doc.querySelectorAll('img').forEach(img => {
+      img.classList.add('rounded-lg', 'shadow-md');
+      img.setAttribute('loading', 'lazy');
+    });
+
+    // Procesar bloques de código
+    doc.querySelectorAll('pre').forEach(pre => {
+      pre.classList.add('rounded-lg', 'p-4', 'overflow-x-auto');
+    });
+
+    this.post!.content.rendered = doc.body.innerHTML;
+  }
 
   private convertHtmlToNotionBlocks(html: string): any[] {
     const parser = new DOMParser();
@@ -254,5 +285,12 @@ export class PostComponent implements OnInit {
     const tmp = document.createElement('DIV');
     tmp.innerHTML = html;
     return tmp.textContent || tmp.innerText || '';
+  }
+
+  private openPublishModal(): void {
+    const modal = document.getElementById('prepublish-modal');
+    if (modal) {
+      modal.classList.remove('hidden');
+    }
   }
 }
