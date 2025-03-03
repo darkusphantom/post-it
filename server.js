@@ -11,12 +11,21 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors({
-  origin: ['http://localhost:4200', 'http://localhost:3000', 'https://post-it-now.netlify.app'], // Agrega tu dominio de producción aquí
-  // origin: '*', // No recomendado. pero en caso de que lo de arriba no funcione, usarlo
+  origin: function (origin, callback) {
+    // Permitir solicitudes sin origen (como Postman)
+    if (!origin) return callback(null, true);
+    if (['http://localhost:4200', 'https://post-it-now.netlify.app'].indexOf(origin) === -1) {
+      const msg = 'El origen ' + origin + ' no está permitido';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(bodyParser.json());
+
+app.options('*', cors()); // Permitir todas las opciones
 
 const openai = new OpenAI({
   apiKey: process.env.CHATGPT_API_KEY,
