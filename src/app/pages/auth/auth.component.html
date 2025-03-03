@@ -1,0 +1,33 @@
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+  <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
+    <h2 class="text-2xl font-bold text-center text-gray-900 dark:text-white">Login to your account</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Email address</label>
+        <input id="email" formControlName="email" type="email" autocomplete="email" required class="block w-full px-3 py-2 mt-1 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="text-sm text-red-600">Please enter a valid email address</div>
+      </div>
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Password</label>
+        <input id="password" formControlName="password" type="password" autocomplete="current-password" required class="block w-full px-3 py-2 mt-1 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-sm text-red-600">Password must be at least 6 characters long</div>
+      </div>
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <input id="remember_me" name="remember_me" type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
+          <label for="remember_me" class="block ml-2 text-sm text-gray-900 dark:text-gray-200">Remember me</label>
+        </div>
+        <div class="text-sm">
+          <a href="#" class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400">Forgot your password?</a>
+        </div>
+      </div>
+      <div>
+        <button type="submit" class="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Sign in</button>
+      </div>
+      <div *ngIf="errorMessage" class="text-sm text-center text-red-600">{{ errorMessage }}</div>
+    </form>
+    <div class="text-sm text-center text-gray-600 dark:text-gray-400">
+      Don't have an account? <a href="#" class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400">Sign up</a>
+    </div>
+  </div>
+</div>
