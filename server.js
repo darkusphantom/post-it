@@ -11,7 +11,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors({
-  origin: '*',
+  origin: ['http://localhost:4200', 'http://localhost:3000', 'https://post-it-now.netlify.app'], // Agrega tu dominio de producción aquí
+  // origin: '*', // No recomendado. pero en caso de que lo de arriba no funcione, usarlo
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
