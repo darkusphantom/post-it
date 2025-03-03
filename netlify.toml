@@ -1,0 +1,10 @@
+[build]
+  command = "ng build"
+  functions = "functions"
+  publish = "dist/post-it"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/server/:splat"
+  status = 200
+  force = true

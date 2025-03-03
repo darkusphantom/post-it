@@ -1,18 +1,29 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { AuthComponent } from './pages/auth/auth.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { PostComponent } from './pages/post/post.component';
+import { WordPressService } from './services/word-press.service';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    AuthComponent,
+    DashboardComponent,
+    PostComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ReactiveFormsModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [WordPressService, HttpClientModule],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
