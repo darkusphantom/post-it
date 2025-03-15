@@ -6,7 +6,7 @@
     "start": "node server.js",
     "start:frontend": "ng serve",
     "dev": "concurrently \"npm run start\" \"npm run start:frontend\"",
-    "build": "ng build",
+    "build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
