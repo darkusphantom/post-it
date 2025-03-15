@@ -132,7 +132,7 @@ export class PostComponent implements OnInit {
         error: (error: any) => {
           this.isSendingPost = false
           console.error('Error al crear la página:', error);
-          window.alert(`Error al crear la página: ${error}`)
+          window.alert(`Error al crear la página: ${error.message}`)
         }
       });
     }

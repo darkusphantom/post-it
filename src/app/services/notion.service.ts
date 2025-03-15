@@ -25,7 +25,7 @@ interface NotionPage {
   providedIn: 'root'
 })
 export class NotionService {
-  private apiUrl = 'http://localhost:3000/api/notion'; // URL de tu backend
+  private apiUrl = environment.apiUrl + '/api/notion'; // URL de tu backend
 
   constructor(private http: HttpClient) { }
 
