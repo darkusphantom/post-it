@@ -9,7 +9,8 @@ import { environment } from '../../environments/environment'
   providedIn: 'root'
 })
 export class OpenAIService {
-  private apiUrl = environment.apiUrl + '/api/openai';
+  private apiUrl = 'http://localhost:3000/api/openai';
+  // private apiUrl = '/api/openai';
 
   constructor(private http: HttpClient) { }
 

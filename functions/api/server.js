@@ -4,6 +4,7 @@ const cors = require('cors');
 const OpenAI = require('openai');
 const dotenv = require('dotenv');
 const { Client } = require('@notionhq/client');
+const serverless = require('serverless-http');
 
 dotenv.config();
 
@@ -173,3 +174,6 @@ app.listen(port, () => {
     API_KEY_NOTION: process.env.API_KEY_NOTION ? 'Presente' : 'No presente'
   });
 });
+
+// Exportar el handler para Netlify Functions
+module.exports.handler = serverless(app);

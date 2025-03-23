@@ -1,5 +1,10 @@
+[build]
+  command = "ng build"
+  functions = "functions"
+  publish = "dist/post-it"
+
 [[redirects]]
   from = "/api/*"
-  to = "https://post-it-now.netlify.app/api/:splat"
+  to = "/.netlify/functions/server/:splat"
   status = 200
   force = true
