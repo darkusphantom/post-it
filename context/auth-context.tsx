@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 import { useRouter, usePathname } from "next/navigation"
+import { getAuthToken } from "@/lib/auth"
 
 interface AuthContextType {
   isAuthenticated: boolean
@@ -25,8 +26,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const checkAuth = async () => {
       try {
         // Verificar si existe la cookie de autenticación
-        const hasAuthCookie = document.cookie.includes("auth-token")
-        setIsAuthenticated(hasAuthCookie)
+        // const hasAuthCookie = document.cookie.includes("auth-token")
+                //TODO: Mejorar el auth para las cookies
+        const hasAuthCookie = await getAuthToken()
+        setIsAuthenticated(Boolean(hasAuthCookie))
 
         // Redirigir si es necesario
         if (!hasAuthCookie && pathname !== "/" && !pathname.includes("/api/")) {
