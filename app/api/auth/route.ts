@@ -5,7 +5,7 @@ export async function POST(request: NextRequest) {
     const { username, password } = await request.json()
 
     // En un entorno real, validarías contra una base de datos o servicio
-    if (username === "admin" && password === "password") {
+    if (username === process.env.USER && password === process.env.PASSWORD) {
       const response = NextResponse.json({ success: true, message: "Autenticación exitosa" }, { status: 200 })
 
       // Establecer cookie de autenticación

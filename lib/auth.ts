@@ -6,7 +6,7 @@ import { cookies } from "next/headers"
 // Por ahora, usamos una validación simple para demostración
 export async function login(username: string, password: string) {
   // Simulación de validación
-  if (username === "admin" && password === "password") {
+  if (username === process.env.USER && password === process.env.PASSWORD) {
     // En producción, deberías usar un token JWT o similar
     const cookieStore = await cookies()
     cookieStore.set("auth-token", "demo-token", {
