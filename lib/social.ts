@@ -6,7 +6,13 @@ import { saveToNotion } from "@/lib/notion"
 
 // En un entorno real, aquí integrarías con las APIs de redes sociales
 // Por ahora, simulamos el proceso y guardamos en Notion
-export async function shareToSocialMedia(post: Post, shareText: string) {
+export async function shareToSocialMedia(
+  post: Post, 
+  shareText: string, 
+  topic: string = "👨‍💻 Programación", 
+  networks: string[] = ["Linkedin", "Facebook"],
+  publishDate: string = ""
+) {
   const authToken = await getAuthToken()
   if (!authToken) {
     throw new Error("No autenticado")
@@ -17,7 +23,7 @@ export async function shareToSocialMedia(post: Post, shareText: string) {
     console.log(`Compartiendo: ${post.title} con texto: ${shareText}`)
 
     // Guardar en Notion para seguimiento
-    await saveToNotion(post, shareText)
+    await saveToNotion(post, shareText, topic, networks, publishDate)
 
     return { success: true }
   } catch (error) {

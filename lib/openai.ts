@@ -28,8 +28,9 @@ export async function generateShareText(post: Post): Promise<string> {
     const textContent = stripHtml(post.content);
 
     const prompt = `
-      Genera un texto atractivo para compartir en redes sociales sobre el siguiente artículo.
-      El texto debe ser conciso (máximo 280 caracteres), llamativo y debe invitar a leer el artículo completo.
+      Eres un experto en creación de contenido para redes sociales. Genera un texto atractivo para compartir en redes sociales sobre el siguiente artículo.
+      El texto debe ser conciso (máximo 280 caracteres), creativo y que genere la curiosidad al lector (como si le solucionara un problema),
+      y despierte su curiosidad para leer el artículo completo.
       
       Título del artículo: ${post.title}
       Contenido: ${textContent.substring(0, 500)}...
@@ -38,6 +39,7 @@ export async function generateShareText(post: Post): Promise<string> {
       - Incluye emojis relevantes
       - Usa un tono conversacional
       - Incluye una pregunta o call-to-action
+      - El call to action debe ser más atractivo que "lee más". Puedes darle un tono serio o divertido.
       - No uses hashtags
     `
 
